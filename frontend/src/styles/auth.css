@@ -1,0 +1,445 @@
+/* ═══════════════════════════════════════════════════
+   LIGHT AUTHENTICATION THEME
+   ═══════════════════════════════════════════════════ */
+
+body {
+  background-color: var(--bg);
+}
+
+.auth-page {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 20%, var(--green-50) 0%, var(--bg) 70%);
+  padding: 20px;
+  font-family: var(--font);
+  color: var(--text);
+}
+
+/* ── Centered Card ── */
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 32px 32px 32px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: authFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes authFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Brand Header ── */
+.auth-brand {
+  text-align: center;
+}
+
+.auth-logo-name {
+  font-family: 'Sora', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  margin-bottom: 4px;
+}
+
+.auth-logo-aasai {
+  color: var(--green-500);
+}
+
+.auth-logo-foods {
+  color: var(--green-600);
+}
+
+.auth-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 6px;
+  font-weight: 400;
+}
+
+/* ── Tabs Container ── */
+.auth-tabs {
+  display: flex;
+  background-color: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.auth-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.auth-tab:hover {
+  color: var(--text);
+  background-color: var(--white);
+}
+
+.auth-tab.active {
+  background-color: var(--primary);
+  color: #ffffff;
+  border: 1px solid var(--primary-dark);
+  box-shadow: 0 2px 6px rgba(45,106,79,0.2);
+}
+
+/* ── Try Demo Box ── */
+.auth-demo-box {
+  background-color: #eef7ee;
+  border: 1px solid #cce8cc;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #2e5e22;
+  text-align: left;
+}
+
+.auth-demo-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.auth-demo-line {
+  cursor: pointer;
+  padding: 2px 0;
+  transition: color 0.2s, text-decoration 0.2s;
+}
+
+.auth-demo-line:hover {
+  color: #1b4312;
+  text-decoration: underline;
+}
+
+/* ── Form Elements ── */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-group label {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: left;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-wrap input {
+  width: 100%;
+  background-color: var(--white);
+  border: 1.5px solid var(--border-2);
+  border-radius: 8px;
+  padding: 12px 48px 12px 16px;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* For non-password inputs, standard padding */
+.input-wrap input[type="email"],
+.input-wrap input[type="text"],
+.input-wrap input[type="tel"] {
+  padding-right: 16px;
+}
+
+.input-wrap input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+}
+
+.input-wrap input::placeholder {
+  color: var(--text-faint);
+}
+
+/* ── Password Toggle ── */
+.toggle-pwd {
+  position: absolute;
+  right: 8px;
+  background-color: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  padding: 0;
+}
+
+.toggle-pwd:hover {
+  background-color: var(--green-100);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.toggle-pwd svg {
+  stroke: currentColor;
+}
+
+/* ── Forgot Password ── */
+.forgot-password-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -4px;
+}
+
+.forgot-password-link {
+  color: var(--primary);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-password-link:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* ── Buttons ── */
+.auth-submit-btn {
+  width: 100%;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  box-shadow: 0 2px 8px rgba(45,106,79,0.2);
+}
+
+.auth-submit-btn:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: 0 4px 14px rgba(45,106,79,0.3);
+}
+
+.auth-submit-btn:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.auth-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Divider */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  margin: 6px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: var(--border);
+}
+
+.auth-divider::before {
+  margin-right: 12px;
+}
+
+.auth-divider::after {
+  margin-left: 12px;
+}
+
+/* Google Button */
+.auth-google-btn {
+  width: 100%;
+  background-color: var(--white);
+  border: 1.5px solid var(--border-2);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.auth-google-btn:hover {
+  background-color: var(--bg-2);
+  border-color: var(--primary);
+}
+
+.auth-google-btn:active {
+  transform: scale(0.99);
+}
+
+.google-icon-svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Alerts & Status ── */
+.auth-alert {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.auth-success {
+  background-color: var(--green-50);
+  border: 1px solid var(--green-200);
+  color: var(--green-700);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  text-align: left;
+}
+
+/* Shake Animation on Error */
+@keyframes authShake {
+  0%, 100% { transform: translateX(0); }
+  15%      { transform: translateX(-6px); }
+  30%      { transform: translateX(6px); }
+  45%      { transform: translateX(-4px); }
+  60%      { transform: translateX(4px); }
+  75%      { transform: translateX(-2px); }
+  90%      { transform: translateX(2px); }
+}
+
+.form-shake {
+  animation: authShake 0.4s ease;
+}
+
+/* Spinner */
+.auth-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: authSpin 0.6s linear infinite;
+  display: inline-block;
+}
+
+@keyframes authSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Helper styles for grid fields in registration */
+.grid-2-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .grid-2-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Success step indicator */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.step {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--bg-2);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--border);
+}
+
+.step.active {
+  background-color: var(--primary-bg);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.step.done {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+.step-line {
+  flex: 1;
+  max-width: 60px;
+  height: 2px;
+  background-color: var(--border);
+}
+
+.step-line.done {
+  background-color: var(--primary);
+}

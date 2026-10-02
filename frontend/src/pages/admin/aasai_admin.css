@@ -1,0 +1,381 @@
+/* ══════════════════════════════════════
+   AASAI FOODS — Admin Products Page Specific Theme
+   ══════════════════════════════════════ */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.page-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  font-family: var(--font-admin);
+  letter-spacing: -0.01em;
+}
+.page-sub {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+.btn-add {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: var(--font-admin);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-ease);
+}
+.btn-add:hover {
+  background: var(--color-primary-hover);
+}
+.btn-add:active {
+  transform: scale(0.98);
+  background: var(--color-primary-active);
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.stat {
+  background: var(--color-surface);
+  border-radius: 10px;
+  padding: 14px 16px;
+  border: 0.5px solid var(--color-border);
+  transition: all var(--transition-ease);
+}
+.stat:hover {
+  border-color: var(--color-text-secondary);
+  background: var(--color-bg);
+}
+.stat .lbl {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+}
+.stat .val {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.stat .sub {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 0.5px solid var(--color-border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  background: var(--color-bg);
+  flex: 1;
+  min-width: 140px;
+  transition: all var(--transition-ease);
+}
+.search-box:focus-within {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 2px var(--color-success-bg);
+}
+.search-box i {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.search-box input {
+  border: none;
+  background: none;
+  font-size: 12px;
+  color: var(--color-text-primary);
+  outline: none;
+  width: 100%;
+  font-family: var(--font-admin);
+}
+.flt {
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 0.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--font-admin);
+  transition: all var(--transition-ease);
+}
+.flt:hover {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+}
+.flt.on {
+  background: var(--color-success-bg);
+  border-color: var(--color-primary);
+  color: var(--color-success-text);
+  font-weight: 500;
+}
+.card {
+  background: var(--color-surface);
+  border: 0.5px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.pname {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.psub {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+/* Badges alignment */
+.badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+  display: inline-block;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.b-in, .b-active {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 0.5px solid var(--color-border);
+}
+.b-low {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: 0.5px solid var(--color-border);
+}
+.b-out {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  border: 0.5px solid var(--color-border);
+}
+.b-draft {
+  background: var(--color-gray-bg);
+  color: var(--color-gray-text);
+  border: 0.5px solid var(--color-border);
+}
+
+/* Actions */
+.acts {
+  display: flex;
+  gap: 5px;
+}
+.act {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 0.5px solid var(--color-border);
+  background: var(--color-surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-ease);
+}
+.act:hover {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  border-color: var(--color-text-secondary);
+}
+.act i {
+  font-size: 16px;
+}
+.act.danger:hover {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  border-color: var(--color-danger-text);
+}
+
+.warn-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-warning-bg);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--color-warning-text);
+  border: 0.5px solid var(--color-border);
+}
+
+/* Modal specific overrides for products list */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 46, 26, 0.4);
+  z-index: 1000;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 40px;
+  backdrop-filter: blur(4px);
+}
+.modal-bg.open {
+  display: flex;
+}
+.modal {
+  background: var(--color-surface);
+  border: 0.5px solid var(--color-border);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(45, 90, 27, 0.08);
+}
+.mhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 0.5px solid var(--color-border);
+}
+.mhead h3 {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.mclose {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  display: flex;
+  padding: 0;
+  transition: color var(--transition-ease);
+}
+.mclose:hover {
+  color: var(--color-danger-text);
+}
+.mbody {
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.mbody .full {
+  grid-column: 1 / -1;
+}
+.fg label {
+  display: block;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 500;
+}
+.fg input, .fg select, .fg textarea {
+  width: 100%;
+  font-size: 12px;
+  padding: 8px 12px;
+  border: 0.5px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-admin);
+  transition: all var(--transition-ease);
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-success-bg);
+}
+.fg textarea {
+  height: 60px;
+  resize: none;
+}
+.mfoot {
+  padding: 12px 18px;
+  border-top: 0.5px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.btn-cancel {
+  font-size: 12px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: var(--color-surface);
+  border: 0.5px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-family: var(--font-admin);
+  cursor: pointer;
+  transition: all var(--transition-ease);
+}
+.btn-cancel:hover {
+  background: var(--color-bg);
+}
+.btn-save {
+  font-size: 12px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  border: none;
+  font-family: var(--font-admin);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-ease);
+}
+.btn-save:hover {
+  background: var(--color-primary-hover);
+}
+.btn-save:active {
+  background: var(--color-primary-active);
+  transform: scale(0.98);
+}
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: 12px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  border: 0.5px solid var(--color-border);
+  border-left: 3px solid var(--color-primary);
+  box-shadow: 0 8px 24px rgba(45, 90, 27, 0.08);
+}
+.toast.show {
+  display: flex;
+}
+.empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
