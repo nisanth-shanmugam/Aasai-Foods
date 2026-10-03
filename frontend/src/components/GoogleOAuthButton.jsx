@@ -20,21 +20,29 @@ export default function GoogleOAuthButton({ redirectPath }) {
         id_token: credentialResponse.credential,
       });
       // Store JWTs via the AuthContext's login helper
-      await login(data);
+      const loggedInUser = await login(data);
+      const role = loggedInUser?.role || data?.role;
+
       // Default navigation based on role (can be overridden via prop)
       if (redirectPath) {
         navigate(redirectPath, { replace: true });
-      } else if (data.role === "admin") {
-        navigate("/admin/dashboard", { replace: true });
+      } else if (role === "admin") {
+        navigate("/admin", { replace: true });
       } else {
-        navigate("/account", { replace: true });
+        navigate("/home", { replace: true });
       }
     } catch (err) {
-      console.error(err);
+      console.error("GOOGLE LOGIN ERROR:", err);
+      console.error("STATUS:", err.response?.status);
+      console.error("DATA:", err.response?.data);
+      console.error("URL:", err.config?.url);
+
       const msg =
         err.response?.data?.error ||
         err.response?.data?.detail ||
+        err.message ||
         "Google authentication failed.";
+
       alert(msg);
     }
   };

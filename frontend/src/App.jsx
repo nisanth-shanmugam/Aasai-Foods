@@ -92,6 +92,10 @@ export default function App() {
               <Route path="/admin/analytics" element={<ProtectedRoute role="admin"><AdminAnalytics /></ProtectedRoute>} />
               <Route path="/admin/settings"  element={<ProtectedRoute role="admin"><AdminSettings /></ProtectedRoute>} />
 
+              {/* Route Aliases / Redirects */}
+              <Route path="/account"         element={<RootRedirect />} />
+              <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
