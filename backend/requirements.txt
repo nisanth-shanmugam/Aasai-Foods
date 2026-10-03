@@ -1,0 +1,11 @@
+Django
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+python-dotenv
+google-auth
+requests
+channels
+daphne
+twilio
+Pillow
