@@ -124,4 +124,4 @@ EMAIL_PORT          = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_USE_TLS       = True
 EMAIL_HOST_USER     = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_ID    = os.getenv('GOOGLE_CLIENT_ID', '918591275952-hlt9av64p8cqg97j28agsf0aeol64k4v.apps.googleusercontent.com')

@@ -13,6 +13,8 @@ urlpatterns = [
     path("reset-password/",  views.ResetPasswordView.as_view()),
     path("google/", views.GoogleOAuthView.as_view(), name="google_oauth"),
     path("seed-demo-users/", views.seed_demo_users_view),
+    path("send-otp/",        views.SendPhoneOTPView.as_view()),
+    path("verify-otp/",      views.VerifyPhoneOTPView.as_view()),
     path("admin/users/",          views.AdminUserListView.as_view()),
     path("admin/users/<int:pk>/",  views.AdminUserToggleView.as_view()),
 ]

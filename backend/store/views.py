@@ -90,11 +90,19 @@ class ProductDetailView(APIView):
 
 class PlaceOrderView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def post(self, request):
+        import json
         data = request.data.copy()
+        items_data = data.get("items")
+        if isinstance(items_data, str):
+            try:
+                data["items"] = json.loads(items_data)
+            except Exception:
+                pass
         data["customer_email"] = request.user.email
-        data["customer_name"] = data.get("customer_name") or request.user.get_full_name() or request.user.email
+        data["customer_name"] = data.get("customer_name") or getattr(request.user, "name", "") or request.user.email
         s = OrderCreateSerializer(data=data)
         if not s.is_valid():
             return Response(s.errors, status=400)
@@ -114,7 +122,7 @@ class PlaceOrderView(APIView):
                 note=f"Order {order.order_id}"
             )
 
-        order_data = OrderSerializer(order).data
+        order_data = OrderSerializer(order, context={"request": request}).data
         broadcast("order:created", order_data)
 
         # Broadcast updated product stock data for any item affected by this order

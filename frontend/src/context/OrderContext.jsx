@@ -12,21 +12,30 @@ import {
 
 const OrderContext = createContext(null);
 
+function formatStatus(status) {
+  if (!status) return "Pending";
+  if (status === "payment_pending") return "Payment Verification Pending";
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
 function normalizeOrder(o) {
   return {
-    id:       o.order_id,
-    pk:       o.id,
-    customer: o.customer_name,
-    email:    o.customer_email || "",
-    phone:    o.phone,
-    address:  o.address,
-    date:     o.created_at
+    id:            o.order_id,
+    pk:            o.id,
+    customer:      o.customer_name,
+    email:         o.customer_email || "",
+    phone:         o.phone,
+    address:       o.address,
+    date:          o.created_at
       ? new Date(o.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
       : "",
-    amount:   parseFloat(o.total_amount || 0),
-    status:   o.status
-      ? o.status.charAt(0).toUpperCase() + o.status.slice(1)
-      : "Pending",
+    amount:        parseFloat(o.total_amount || 0),
+    status:        formatStatus(o.status),
+    statusCode:    o.status,
+    paymentMethod: o.payment_method || "upi",
+    paymentStatus: o.payment_status || "pending",
+    utrNumber:     o.utr_number || "",
+    paymentScreenshotUrl: o.payment_screenshot_url || o.payment_screenshot || "",
     items: (o.items || []).map((i) => ({
       name:     i.name,
       price:    parseFloat(i.price),
@@ -64,11 +73,27 @@ export function OrderProvider({ children }) {
     }
   }, []);
 
-  const addOrder = async (payload) => {
-    const { data } = await api.post("/store/orders/", payload);
+  const addOrder = async (payload, screenshotFile = null) => {
+    let body = payload;
+    let headers = {};
+    if (screenshotFile || payload.payment_screenshot instanceof File) {
+      const formData = new FormData();
+      Object.keys(payload).forEach((key) => {
+        if (key === "items") {
+          formData.append("items", JSON.stringify(payload.items));
+        } else if (payload[key] !== undefined && payload[key] !== null) {
+          formData.append(key, payload[key]);
+        }
+      });
+      if (screenshotFile instanceof File && !payload.payment_screenshot) {
+        formData.append("payment_screenshot", screenshotFile);
+      }
+      body = formData;
+      headers = { "Content-Type": "multipart/form-data" };
+    }
+    const { data } = await api.post("/store/orders/", body, { headers });
     const normalized = normalizeOrder(data);
     setOrders((prev) => [normalized, ...prev]);
-    // Backend broadcasts order:created — other tabs/users get it via WS
     return normalized;
   };
 

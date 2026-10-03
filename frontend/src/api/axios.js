@@ -1,6 +1,21 @@
 import axios from "axios";
 
-const api = axios.create({ baseURL: "http://localhost:8000/api" });
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+    return `${window.location.origin}/api`;
+  }
+  return "http://localhost:8000/api";
+};
+
+const BASE_URL = getBaseURL();
+
+const api = axios.create({ baseURL: BASE_URL });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("access");
@@ -16,7 +31,7 @@ api.interceptors.response.use(
       original._retry = true;
       try {
         const refresh = localStorage.getItem("refresh");
-        const { data } = await axios.post("http://localhost:8000/api/auth/token/refresh/", { refresh });
+        const { data } = await axios.post(`${BASE_URL}/auth/token/refresh/`, { refresh });
         localStorage.setItem("access", data.access);
         original.headers.Authorization = `Bearer ${data.access}`;
         return api(original);

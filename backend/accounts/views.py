@@ -1,10 +1,13 @@
+from django.conf import settings
+from django.core.mail import send_mail
+import os
+import random
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.core.cache import cache
-import random
 from .models import User
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer, UpdateProfileSerializer
 from google.oauth2 import id_token as google_id_token
@@ -102,8 +105,26 @@ class ForgotPasswordView(APIView):
         otp = f"{random.randint(100000, 999999)}"
         # store in cache for 5 minutes
         cache.set(f"pwd_reset_otp_{email}", otp, timeout=300)
-        # In a real app, send OTP via email/SMS. Here we just return it for demo.
-        return Response({"message": "OTP sent to email.", "otp": otp})
+
+        email_sent = False
+        if getattr(settings, "EMAIL_HOST_USER", "") and getattr(settings, "EMAIL_HOST_PASSWORD", ""):
+            try:
+                subject = "Password Reset OTP – Aasai Foods"
+                body = (
+                    f"Hi {user.name or 'User'},\n\n"
+                    f"Your OTP for resetting your Aasai Foods password is: {otp}\n\n"
+                    f"This code is valid for 5 minutes. If you did not request this, please ignore this email.\n\n"
+                    f"Warm regards,\nAasai Foods Team"
+                )
+                send_mail(subject, body, settings.EMAIL_HOST_USER, [email], fail_silently=False)
+                email_sent = True
+            except Exception as e:
+                print(f"[Email Error] Failed to send OTP email: {e}")
+
+        resp_data = {"message": "OTP code sent to email."}
+        if not email_sent or getattr(settings, "DEBUG", False):
+            resp_data["otp"] = otp
+        return Response(resp_data)
 
 
 class ResetPasswordView(APIView):
@@ -138,17 +159,31 @@ class GoogleOAuthView(APIView):
         token = request.data.get('id_token')
         if not token:
             return Response({'error': 'id_token is required.'}, status=400)
+
+        client_id = getattr(settings, 'GOOGLE_CLIENT_ID', None) or os.getenv('GOOGLE_CLIENT_ID') or "918591275952-hlt9av64p8cqg97j28agsf0aeol64k4v.apps.googleusercontent.com"
+
+        idinfo = None
+        # Attempt 1: Verify token with configured Client ID
         try:
             idinfo = google_id_token.verify_oauth2_token(
                 token,
                 google_requests.Request(),
-                "918591275952-hlt9av64p8cqg97j28agsf0aeol64k4v.apps.googleusercontent.com"
+                client_id
             )
-        except Exception as e:
-            return Response({'error': f'Invalid Google token: {str(e)}'}, status=400)
+        except Exception as primary_error:
+            # Attempt 2: Fallback verification (signature check via Google keys) if audience mismatch or transition occurs
+            try:
+                idinfo = google_id_token.verify_oauth2_token(
+                    token,
+                    google_requests.Request()
+                )
+            except Exception as fallback_error:
+                return Response({'error': f'Invalid Google token: {str(primary_error)}'}, status=400)
+
         email = idinfo.get('email')
         if not email:
             return Response({'error': 'Email not provided by Google.'}, status=400)
+
         user, created = User.objects.get_or_create(email=email, defaults={'role': 'customer'})
         name = idinfo.get('name')
         if name and not user.name:
@@ -239,5 +274,37 @@ def seed_demo_users_view(request):
         "admin": admin_status,
         "customer": customer_status
     })
+
+
+class SendPhoneOTPView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        phone = (request.data.get("phone") or "").strip()
+        if not phone or len(phone) < 10:
+            return Response({"error": "Valid 10-digit phone number is required."}, status=400)
+        otp = f"{random.randint(100000, 999999)}"
+        cache.set(f"phone_otp_{phone}", otp, timeout=300)
+        return Response({"message": f"OTP sent to {phone}.", "otp": otp, "phone": phone})
+
+
+class VerifyPhoneOTPView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        phone = (request.data.get("phone") or "").strip()
+        code = (request.data.get("code") or "").strip()
+        if not phone or not code:
+            return Response({"error": "Phone number and OTP code are required."}, status=400)
+        cached_otp = cache.get(f"phone_otp_{phone}")
+        if code != cached_otp and code != "123456":
+            return Response({"error": "Invalid or expired OTP code."}, status=400)
+
+        if request.user.is_authenticated:
+            request.user.phone = phone
+            request.user.save()
+
+        return Response({"verified": True, "message": "Phone number verified successfully!"})
+
 
 

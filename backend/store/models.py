@@ -28,7 +28,7 @@ class Product(models.Model):
 class Order(models.Model):
     STATUS = [
         ("pending",          "Pending"),
-        ("payment_pending",  "Payment Pending"),
+        ("payment_pending",  "Payment Verification Pending"),
         ("paid",             "Paid"),
         ("shipped",          "Shipped"),
         ("delivered",        "Delivered"),
@@ -51,9 +51,10 @@ class Order(models.Model):
     phone              = models.CharField(max_length=15)
     address            = models.TextField()
     total_amount       = models.DecimalField(max_digits=10, decimal_places=2)
-    status             = models.CharField(max_length=20, choices=STATUS, default="pending")
+    status             = models.CharField(max_length=30, choices=STATUS, default="pending")
     payment_method     = models.CharField(max_length=10, choices=PAYMENT_METHOD, default="upi")
-    payment_status     = models.CharField(max_length=10, choices=PAYMENT_STATUS, default="pending")
+    payment_status     = models.CharField(max_length=20, choices=PAYMENT_STATUS, default="pending")
+    utr_number         = models.CharField(max_length=50, blank=True, null=True, default="")
     payment_screenshot = models.ImageField(upload_to="payment_screenshots/", blank=True, null=True)
     created_at         = models.DateTimeField(auto_now_add=True)
 

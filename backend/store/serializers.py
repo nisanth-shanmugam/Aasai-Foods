@@ -32,12 +32,14 @@ class OrderItemSerializer(serializers.Serializer):
 
 
 class OrderCreateSerializer(serializers.Serializer):
-    customer_name  = serializers.CharField(max_length=100)
-    customer_email = serializers.EmailField(required=False, default="")
-    phone          = serializers.CharField(max_length=15)
-    address        = serializers.CharField()
-    payment_method = serializers.ChoiceField(choices=["upi", "cod"], default="upi")
-    items          = OrderItemSerializer(many=True)
+    customer_name      = serializers.CharField(max_length=100)
+    customer_email     = serializers.EmailField(required=False, default="")
+    phone              = serializers.CharField(max_length=15)
+    address            = serializers.CharField()
+    payment_method     = serializers.ChoiceField(choices=["upi", "cod"], default="upi")
+    utr_number         = serializers.CharField(required=False, allow_blank=True, default="")
+    payment_screenshot = serializers.ImageField(required=False, allow_null=True)
+    items              = OrderItemSerializer(many=True)
 
     def validate_items(self, items):
         if len(items) == 0:
@@ -92,10 +94,12 @@ class OrderCreateSerializer(serializers.Serializer):
                 total += subtotal
                 order_items.append((product, item["quantity"]))
 
+            is_upi = validated_data.get("payment_method") == "upi"
             order = Order.objects.create(
                 order_id=f"AF{uuid.uuid4().hex[:6].upper()}",
                 total_amount=total,
-                status="payment_pending" if validated_data.get("payment_method") == "upi" else "pending",
+                status="payment_pending" if is_upi else "pending",
+                payment_status="uploaded" if is_upi and validated_data.get("payment_screenshot") else ("pending" if is_upi else "pending"),
                 **validated_data,
             )
 
@@ -125,7 +129,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = [
             "id", "order_id", "customer_name", "customer_email", "phone",
             "address", "total_amount", "status", "payment_method",
-            "payment_status", "payment_screenshot_url", "created_at", "items",
+            "payment_status", "utr_number", "payment_screenshot_url", "created_at", "items",
         ]
 
     def get_payment_screenshot_url(self, obj):
