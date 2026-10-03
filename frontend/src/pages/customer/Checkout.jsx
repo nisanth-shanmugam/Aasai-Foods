@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useOrders } from "../../context/OrderContext";
 import { useAuth } from "../../context/AuthContext";
-import api from "../../api/axios";
 import Navbar from "./Navbar";
 import "./customer.css";
 
@@ -14,7 +13,6 @@ const STATES = [
 
 const PAYMENT_OPTIONS = [
   { id: "upi", label: "UPI / QR Code Pay", icon: "📱", desc: "Google Pay, PhonePe, Paytm, BHIM QR", tag: "Recommended" },
-  { id: "cod", label: "Cash on Delivery",   icon: "💵", desc: "Pay with cash when delivered" },
 ];
 
 function getSavedAddresses() {
@@ -45,14 +43,6 @@ export default function Checkout() {
     }
   );
 
-  // OTP State
-  const [otpSent, setOtpSent]         = useState(false);
-  const [sendingOtp, setSendingOtp]   = useState(false);
-  const [otpCode, setOtpCode]         = useState("");
-  const [verifyingOtp, setVerifyingOtp] = useState(false);
-  const [phoneVerified, setPhoneVerified] = useState(Boolean(user?.phone));
-  const [otpNotice, setOtpNotice]     = useState("");
-
   // UPI Payment State
   const [utr, setUtr]                 = useState("");
   const [screenshot, setScreenshot]   = useState(null);
@@ -74,44 +64,6 @@ export default function Checkout() {
     setTimeout(() => setCopiedUpi(false), 2000);
   };
 
-  // Handle Send Phone OTP
-  const handleSendOtp = async () => {
-    if (!addr.phone || addr.phone.length < 10) {
-      setError("Please enter a valid 10-digit phone number first.");
-      return;
-    }
-    setError("");
-    setSendingOtp(true);
-    try {
-      const { data } = await api.post("/accounts/send-otp/", { phone: addr.phone });
-      setOtpSent(true);
-      setOtpNotice(`📩 OTP sent to ${addr.phone}. (Demo code: ${data.otp})`);
-    } catch (err) {
-      setError(err.response?.data?.error || "Failed to send OTP. Try again.");
-    } finally {
-      setSendingOtp(false);
-    }
-  };
-
-  // Handle Verify Phone OTP
-  const handleVerifyOtp = async () => {
-    if (!otpCode) {
-      setError("Please enter the 6-digit OTP code.");
-      return;
-    }
-    setError("");
-    setVerifyingOtp(true);
-    try {
-      await api.post("/accounts/verify-otp/", { phone: addr.phone, code: otpCode });
-      setPhoneVerified(true);
-      setOtpNotice("✅ Phone number verified successfully!");
-    } catch (err) {
-      setError(err.response?.data?.error || "Invalid OTP code. Please check and try again.");
-    } finally {
-      setVerifyingOtp(false);
-    }
-  };
-
   // Handle Screenshot file change
   const handleScreenshotChange = (e) => {
     const file = e.target.files?.[0];
@@ -126,8 +78,8 @@ export default function Checkout() {
     e.preventDefault();
     setError("");
 
-    if (!phoneVerified) {
-      setError("Please verify your phone number with OTP before submitting payment.");
+    if (!addr.phone || addr.phone.trim().length < 10) {
+      setError("Please enter a valid 10-digit phone number.");
       return;
     }
 
@@ -264,11 +216,7 @@ export default function Checkout() {
           </div>
         )}
 
-        {otpNotice && (
-          <div className="pf-alert pf-alert-info" style={{ marginBottom: 20, background: "#f0fdf4", color: "#15803d", borderColor: "#bbf7d0" }}>
-            {otpNotice}
-          </div>
-        )}
+
 
         <form onSubmit={handleOrderSubmit}>
           <div className="checkout-layout">
@@ -305,14 +253,9 @@ export default function Checkout() {
                 </div>
               )}
 
-              {/* 1. DELIVERY & PHONE OTP VERIFICATION */}
+              {/* 1. DELIVERY DETAILS */}
               <div className="checkout-section">
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <h3>📍 1. Delivery Details & Phone OTP</h3>
-                  {phoneVerified && (
-                    <span className="verified-badge">✓ Phone Verified</span>
-                  )}
-                </div>
+                <h3>📍 1. Delivery Details</h3>
 
                 <div className="form-grid" style={{ marginTop: 14 }}>
                   <div className="form-field">
@@ -325,58 +268,15 @@ export default function Checkout() {
                   </div>
 
                   <div className="form-field">
-                    <label>Phone Number * {phoneVerified && <span style={{ color: "#16a34a" }}>(Verified)</span>}</label>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <input
-                        value={addr.phone}
-                        onChange={(e) => {
-                          setAddr({ ...addr, phone: e.target.value });
-                          setPhoneVerified(false);
-                          setOtpSent(false);
-                        }}
-                        placeholder="9876543210"
-                        required
-                        maxLength={15}
-                        style={{ flex: 1 }}
-                      />
-                      {!phoneVerified && (
-                        <button
-                          type="button"
-                          className="cust-btn-outline"
-                          onClick={handleSendOtp}
-                          disabled={sendingOtp}
-                          style={{ padding: "0 12px", fontSize: 12, whiteSpace: "nowrap" }}
-                        >
-                          {sendingOtp ? "Sending…" : otpSent ? "Resend OTP" : "Verify OTP"}
-                        </button>
-                      )}
-                    </div>
+                    <label>Phone Number *</label>
+                    <input
+                      value={addr.phone}
+                      onChange={(e) => setAddr({ ...addr, phone: e.target.value })}
+                      placeholder="9876543210"
+                      required
+                      maxLength={15}
+                    />
                   </div>
-
-                  {/* OTP INPUT SECTION */}
-                  {otpSent && !phoneVerified && (
-                    <div className="form-field" style={{ gridColumn: "1/-1", background: "#f8fafc", padding: 14, borderRadius: 10, border: "1px dashed #cbd5e1" }}>
-                      <label style={{ color: "#1e293b", fontWeight: 600 }}>Enter 6-Digit OTP Code *</label>
-                      <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
-                        <input
-                          value={otpCode}
-                          onChange={(e) => setOtpCode(e.target.value)}
-                          placeholder="Enter 6-digit OTP"
-                          maxLength={6}
-                          style={{ flex: 1, letterSpacing: 4, fontWeight: 700, fontSize: 16 }}
-                        />
-                        <button
-                          type="button"
-                          className="cust-btn-primary"
-                          onClick={handleVerifyOtp}
-                          disabled={verifyingOtp}
-                          style={{ padding: "0 16px" }}
-                        >
-                          {verifyingOtp ? "Verifying…" : "Confirm OTP"}
-                        </button>
-                      </div>
-                    </div>
-                  )}
 
                   <div className="form-field" style={{ gridColumn: "1/-1" }}>
                     <label>Street Address *</label>

@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 import os
 import random
+import re
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -281,9 +282,14 @@ class SendPhoneOTPView(APIView):
 
     def post(self, request):
         phone = (request.data.get("phone") or "").strip()
-        if not phone or len(phone) < 10:
+        clean_phone = re.sub(r"\D", "", phone)
+        if clean_phone.startswith("91") and len(clean_phone) == 12:
+            clean_phone = clean_phone[2:]
+        if not clean_phone or len(clean_phone) < 10:
             return Response({"error": "Valid 10-digit phone number is required."}, status=400)
+
         otp = f"{random.randint(100000, 999999)}"
+        cache.set(f"phone_otp_{clean_phone}", otp, timeout=300)
         cache.set(f"phone_otp_{phone}", otp, timeout=300)
         return Response({"message": f"OTP sent to {phone}.", "otp": otp, "phone": phone})
 
@@ -296,7 +302,12 @@ class VerifyPhoneOTPView(APIView):
         code = (request.data.get("code") or "").strip()
         if not phone or not code:
             return Response({"error": "Phone number and OTP code are required."}, status=400)
-        cached_otp = cache.get(f"phone_otp_{phone}")
+
+        clean_phone = re.sub(r"\D", "", phone)
+        if clean_phone.startswith("91") and len(clean_phone) == 12:
+            clean_phone = clean_phone[2:]
+
+        cached_otp = cache.get(f"phone_otp_{clean_phone}") or cache.get(f"phone_otp_{phone}")
         if code != cached_otp and code != "123456":
             return Response({"error": "Invalid or expired OTP code."}, status=400)
 
